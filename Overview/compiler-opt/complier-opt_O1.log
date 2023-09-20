@@ -1,0 +1,86 @@
+
+complier-opt_O1.o:     file format elf64-x86-64
+
+
+Disassembly of section .text:
+
+0000000000000000 <spin_1>:
+   0:	f3 0f 1e fa          	endbr64 
+   4:	b8 64 00 00 00       	mov    $0x64,%eax
+   9:	83 e8 01             	sub    $0x1,%eax
+   c:	75 fb                	jne    9 <spin_1+0x9>
+   e:	c3                   	retq   
+
+000000000000000f <spin_2>:
+   f:	f3 0f 1e fa          	endbr64 
+  13:	c7 44 24 fc 00 00 00 	movl   $0x0,-0x4(%rsp)
+  1a:	00 
+  1b:	8b 44 24 fc          	mov    -0x4(%rsp),%eax
+  1f:	83 f8 63             	cmp    $0x63,%eax
+  22:	7f 14                	jg     38 <spin_2+0x29>
+  24:	8b 44 24 fc          	mov    -0x4(%rsp),%eax
+  28:	83 c0 01             	add    $0x1,%eax
+  2b:	89 44 24 fc          	mov    %eax,-0x4(%rsp)
+  2f:	8b 44 24 fc          	mov    -0x4(%rsp),%eax
+  33:	83 f8 63             	cmp    $0x63,%eax
+  36:	7e ec                	jle    24 <spin_2+0x15>
+  38:	c3                   	retq   
+
+0000000000000039 <return_1>:
+  39:	f3 0f 1e fa          	endbr64 
+  3d:	ba 64 00 00 00       	mov    $0x64,%edx
+  42:	b8 01 00 00 00       	mov    $0x1,%eax
+  47:	83 ea 01             	sub    $0x1,%edx
+  4a:	75 fb                	jne    47 <return_1+0xe>
+  4c:	c3                   	retq   
+
+000000000000004d <return_1_volatile>:
+  4d:	f3 0f 1e fa          	endbr64 
+  51:	ba 64 00 00 00       	mov    $0x64,%edx
+  56:	b8 01 00 00 00       	mov    $0x1,%eax
+  5b:	83 ea 01             	sub    $0x1,%edx
+  5e:	75 f6                	jne    56 <return_1_volatile+0x9>
+  60:	c3                   	retq   
+
+0000000000000061 <foo>:
+  61:	f3 0f 1e fa          	endbr64 
+  65:	c7 07 01 00 00 00    	movl   $0x1,(%rdi)
+  6b:	b8 01 00 00 00       	mov    $0x1,%eax
+  70:	c3                   	retq   
+
+0000000000000071 <foo_func_call>:
+  71:	f3 0f 1e fa          	endbr64 
+  75:	53                   	push   %rbx
+  76:	48 89 fb             	mov    %rdi,%rbx
+  79:	c7 07 01 00 00 00    	movl   $0x1,(%rdi)
+  7f:	b8 00 00 00 00       	mov    $0x0,%eax
+  84:	e8 00 00 00 00       	callq  89 <foo_func_call+0x18>
+  89:	c7 03 01 00 00 00    	movl   $0x1,(%rbx)
+  8f:	b8 01 00 00 00       	mov    $0x1,%eax
+  94:	5b                   	pop    %rbx
+  95:	c3                   	retq   
+
+0000000000000096 <foo_volatile>:
+  96:	f3 0f 1e fa          	endbr64 
+  9a:	c7 07 01 00 00 00    	movl   $0x1,(%rdi)
+  a0:	c7 07 01 00 00 00    	movl   $0x1,(%rdi)
+  a6:	8b 07                	mov    (%rdi),%eax
+  a8:	c3                   	retq   
+
+00000000000000a9 <foo_volatile2>:
+  a9:	f3 0f 1e fa          	endbr64 
+  ad:	48 89 7c 24 f8       	mov    %rdi,-0x8(%rsp)
+  b2:	48 8b 44 24 f8       	mov    -0x8(%rsp),%rax
+  b7:	c7 00 01 00 00 00    	movl   $0x1,(%rax)
+  bd:	48 8b 44 24 f8       	mov    -0x8(%rsp),%rax
+  c2:	c7 00 01 00 00 00    	movl   $0x1,(%rax)
+  c8:	48 8b 44 24 f8       	mov    -0x8(%rsp),%rax
+  cd:	8b 00                	mov    (%rax),%eax
+  cf:	c3                   	retq   
+
+00000000000000d0 <foo_barrier>:
+  d0:	f3 0f 1e fa          	endbr64 
+  d4:	c7 07 01 00 00 00    	movl   $0x1,(%rdi)
+  da:	c7 07 01 00 00 00    	movl   $0x1,(%rdi)
+  e0:	b8 01 00 00 00       	mov    $0x1,%eax
+  e5:	c3                   	retq   
