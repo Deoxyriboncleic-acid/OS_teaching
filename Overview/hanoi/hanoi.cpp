@@ -1,3 +1,6 @@
+#include <iostream>
+#include <cassert>
+
 typedef struct {
   int pc, n;
   char from, to, via;
@@ -20,4 +23,12 @@ void hanoi(int n, char from, char to, char via) {
       default: assert(0);
     }
   }
+}
+
+int main(){
+  int n;
+  char A = 'A', B = 'B', C = 'C';
+  std::cin >> n;
+  hanoi(n, A, B, C);
+  return 0;
 }
