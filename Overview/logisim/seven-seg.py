@@ -1,12 +1,12 @@
 import fileinput
  
 DISPLAY = '''
-     AAAAAAAAA
-    FF       BB
-    FF       BB
-    FF       BB
-    FF       BB
-     GGGGGGGG
+    AAAAAAAAA
+   FF       BB
+   FF       BB
+   FF       BB
+   FF       BB
+    GGGGGGGGG
    EE       CC
    EE       CC
    EE       CC
