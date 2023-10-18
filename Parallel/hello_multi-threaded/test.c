@@ -1,10 +1,10 @@
 #include "thread.h"
 
+int x = 0;
+
 void Thello(int id) {
-  while (1) {
-    //TODO:解释一下语法
-    //printf("%c", "_ABCDEFGHIJKLMNOPQRSTUVWXYZ"[id]);
-  }
+    x++;
+	printf("%d\n" , x);
 }
 
 int main() {
