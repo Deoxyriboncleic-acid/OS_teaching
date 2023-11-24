@@ -10,9 +10,9 @@
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
-} ptable;
+} ptable; //先肤浅理解为进程表
 
-static struct proc *initproc;
+static struct proc *initproc; //TODO init进程
 
 int nextpid = 1;
 extern void forkret(void);
@@ -39,13 +39,13 @@ mycpu(void)
 {
   int apicid, i;
   
-  if(readeflags()&FL_IF)
+  if(readeflags()&FL_IF)//读取EFLAGS寄存器的值，判断中断是否开启
     panic("mycpu called with interrupts enabled\n");
   
   apicid = lapicid();
   // APIC IDs are not guaranteed to be contiguous. Maybe we should have
   // a reverse map, or reserve a register to store &cpus[i].
-  for (i = 0; i < ncpu; ++i) {
+  for (i = 0; i < ncpu; ++i) { //遍历CPU数组，找到对应的CPU,利用CPU的apicid
     if (cpus[i].apicid == apicid)
       return &cpus[i];
   }
@@ -70,6 +70,7 @@ myproc(void) {
 // If found, change state to EMBRYO and initialize
 // state required to run in the kernel.
 // Otherwise return 0.
+//TODO 分配一个新的进程控制块PCB（进程槽）
 static struct proc*
 allocproc(void)
 {
@@ -83,8 +84,9 @@ allocproc(void)
       goto found;
 
   release(&ptable.lock);
-  return 0;
+  return 0;//没有找到空闲的进程控制块
 
+//找到空闲的进程控制块，创建进程
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
@@ -92,10 +94,11 @@ found:
   release(&ptable.lock);
 
   // Allocate kernel stack.
-  if((p->kstack = kalloc()) == 0){
+  if((p->kstack = kalloc()) == 0){ //kalloc()用于分配一个内存页,通常用于分配内核内存
     p->state = UNUSED;
     return 0;
   }
+  //将内核栈的顶部指针给sp
   sp = p->kstack + KSTACKSIZE;
 
   // Leave room for trap frame.
@@ -126,7 +129,7 @@ userinit(void)
   p = allocproc();
   
   initproc = p;
-  if((p->pgdir = setupkvm()) == 0)
+  if((p->pgdir = setupkvm()) == 0) // setupkvm()用于为内核创建一个页表
     panic("userinit: out of memory?");
   inituvm(p->pgdir, _binary_initcode_start, (int)_binary_initcode_size);
   p->sz = PGSIZE;
@@ -139,8 +142,8 @@ userinit(void)
   p->tf->esp = PGSIZE;
   p->tf->eip = 0;  // beginning of initcode.S
 
-  safestrcpy(p->name, "initcode", sizeof(p->name));
-  p->cwd = namei("/");
+  safestrcpy(p->name, "initcode", sizeof(p->name)); //设置进程名字
+  p->cwd = namei("/"); //设置进程的当前目录
 
   // this assignment to p->state lets other cores
   // run this process. the acquire forces the above

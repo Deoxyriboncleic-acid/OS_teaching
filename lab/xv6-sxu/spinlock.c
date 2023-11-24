@@ -35,7 +35,8 @@ acquire(struct spinlock *lk)
   // Tell the C compiler and the processor to not move loads or stores
   // past this point, to ensure that the critical section's memory
   // references happen after the lock is acquired.
-  __sync_synchronize();
+  __sync_synchronize(); //设置一个内存屏障，防止编译器和CPU对临界区的指令进行重排
+  //其实也可以使用汇编代码来实现，但是这样更加方便
 
   // Record info about lock acquisition for debugging.
   lk->cpu = mycpu();
@@ -101,18 +102,20 @@ holding(struct spinlock *lock)
 // it takes two popcli to undo two pushcli.  Also, if interrupts
 // are off, then pushcli, popcli leaves them off.
 
+//TODO关闭CPU的中断并且保存中断的状态
 void
 pushcli(void)
 {
   int eflags;
 
   eflags = readeflags();
-  cli();
+  cli();//关闭中断
   if(mycpu()->ncli == 0)
-    mycpu()->intena = eflags & FL_IF;
+    mycpu()->intena = eflags & FL_IF; //保存的中断之前的状态
   mycpu()->ncli += 1;
 }
 
+//TODO打开CPU的中断并且恢复中断的状态
 void
 popcli(void)
 {
@@ -121,6 +124,6 @@ popcli(void)
   if(--mycpu()->ncli < 0)
     panic("popcli");
   if(mycpu()->ncli == 0 && mycpu()->intena)
-    sti();
+    sti(); //开启中断
 }
 
